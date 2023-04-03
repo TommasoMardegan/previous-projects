@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <style>
+            body {
+                background-color: red;
+            }
+            input{
+                font-size: 15px;
+            }
+            image {
+                border: 10;
+                border-color: black;
+            }
+            p {
+                text-align: center;
+                font-size: 50px;
+            }
+        </style>
+
+        <script>
+            class SlotMachine {
+                constructor() {
+                    this.crediti = 10;
+                    this.primoNum = 0;
+                    this.secondoNum = 0;
+                    this.terzoNum = 0;
+                }
+                Gira() {
+                    //let num = 5;
+                    event.preventDefault();
+                    if(this.crediti > 0) {
+                        this.primoNum = Math.floor(Math.random()*10);
+                        this.secondoNum = Math.floor(Math.random()*10);
+                        this.terzoNum = Math.floor(Math.random()*10);
+                        this.crediti -= 1;
+                        //this.crediti = num;
+                        document.getElementById("imgN1").src = "img/" + this.primoNum + ".png";
+                        document.getElementById("imgN2").src = "img/" + this.secondoNum + ".png";
+                        document.getElementById("imgN3").src = "img/" + this.terzoNum + ".png";
+                        if(this.primoNum == this.secondoNum && this.secondoNum == this.terzoNum) {
+                            this.crediti += (50*(this.primoNum+1));
+                        }
+                        else if(this.primoNum == this.secondoNum && this.secondoNum != this.terzoNum) {
+                            this.crediti += (20*(this.primoNum+1));
+                        }
+                        else if(this.primoNum == this.terzoNum && this.primoNum != this.secondoNum) {
+                            this.crediti += (5*(this.primoNum+1));
+                        }
+                    }
+                    else {
+                        val = true;
+                        Incassa(val);
+                        alert("mi spiace ma" + " --> TU! <--" + " hai perso");
+                    }
+                    document.getElementById("cr").innerHTML = this.crediti;
+                }
+                AggiungiCrediti() {
+                    this.crediti += 10;
+                    document.getElementById("cr").innerHTML = this.crediti;
+                }
+                Incassa(azzerato) {
+                    document.getElementById("imgN1").src = "img/0.png";
+                    document.getElementById("imgN2").src = "img/0.png";
+                    document.getElementById("imgN3").src = "img/0.png";
+                    if(azzerato == false) {
+                        alert("hai incassato " + this.crediti + " crediti")
+                    }
+                    this.crediti = 10;
+                    this.primoNum = 0;
+                    this.secondoNum = 0;
+                    this.terzoNum = 0;
+                    document.getElementById("cr").innerHTML = this.crediti;
+                }
+            }
+            slot = new SlotMachine();
+        </script>       
+    </head>
+    <body>
+        <table border = "0">
+            <tr>
+                <td><img src = "img/0.png" width = 300 height = 300 id = "imgN1"></td>
+                <td><img src = "img/0.png" width = 300 height = 300 id = "imgN2"></td>
+                <td><img src = "img/0.png" width = 300 height = 300 id = "imgN3"></td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td><input type="button" value = "gira la slot" onclick="slot.Gira()">
+                <input type="button" value = "aggiungi crediti" onclick="slot.AggiungiCrediti()">
+                <input type="button" value = "incassa" onclick="slot.Incassa(false)"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><p id = "cr">totale...</p></td>
+            </tr>
+        </table>
+    </body>
+</html>
