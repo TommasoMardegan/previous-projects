@@ -1,0 +1,104 @@
+<html>
+    <head>
+        <script src="fileJS.js"></script>
+        <script>
+            let gest = new GestioneAttivita();
+            let attivitaTmp;
+        </script>
+        <style>
+            input[type=button] {
+                background-color: #038af8;
+                border: none;
+                color: #fff;
+                padding: 10px 15px;
+                text-decoration: none;
+                border-radius:7%;
+                margin: 4px 2px;
+                cursor: pointer;
+            }
+            tr.classe1 {
+                background-color: aliceblue;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>To Do List <img src = "toDoTitle.png" width="5%" heigth="5%"></h1>
+        <!--creazione date-->
+        <table>
+            <tr>
+                <td>
+                    <select id="sl" onChange = "gest.controllaMNO()">
+                        <option></option>
+                        <option>mostra urgenti</option>
+                        <option>nascondi urgenti</option>
+                        <option>ordina per scadenza</option>
+                    </select>
+               </td>
+               <td><input type = "text" id = "descAtt" value = "descrizione"></td>
+               <td><input type="date" id="data"></td>
+               <td><input type = "button" id = "aggiungiAttività" value = "Aggiungi" onclick="let dataTmp = new Date(document.getElementById('data').value); attivitaTmp = new Attivita(false, dataTmp, document.getElementById('descAtt').value); gest.aggiungi(attivitaTmp)"></td>
+            </tr>
+            <tr>
+                <td>
+                    <input type = "button" id = "tutte" value = "tutte" onclick="gest.visualizzaTutte()" >
+                </td>
+                <td>
+                    <input type = "button" id = "ncomp" value = "non completate" onclick="gest.visualizzaNonCompletate()">
+                </td>
+                <td>
+                    <input type = "button" id = "comp" value = "completate" onclick="gest.visualizzaCompletate()">
+                </td>
+            </tr>
+            <tr class = "classe1">
+                <td><input type = "checkbox" onclick="gest.completa(1)" id="ch1" style="display: none;"></td>
+                <td id = "dataAttivita1" class = "da"></td>
+                <td id="descAttivita1" class = "ds"></td>
+                <td><input  id="canc1" type = "button" value ="cancella" onclick="gest.elimina(1)" style="display: none;"></td>
+                <td><select id="mod1" style="display: none" onChange="gest.modifica(1)">
+                    <option value=""></option>
+                    <option value="modifica">modifica</option>
+                </select></td>
+            </tr>
+            <tr class = "classe1">
+                <td><input type = "checkbox" onclick="gest.completa(2)" id="ch2" style="display: none;"></td>
+                <td id = "dataAttivita2" class = "da"></td>
+                <td id="descAttivita2" class = "ds"></td>
+                <td><input id="canc2" type = "button" value ="cancella" onclick="gest.elimina(2)" style="display: none;"></td>
+                <td><select id="mod2" style="display: none" onChange="gest.modifica(2)">
+                    <option value=""></option>
+                    <option value="modifica">modifica</option>
+                </select></td>
+            </tr>
+            <tr class = "classe1">
+                <td><input type = "checkbox" onclick="gest.completa(3)" id="ch3" style="display: none;"></td>
+                <td id = "dataAttivita3" class="da"></td>
+                <td id="descAttivita3" class = "ds"></td>
+                <td><input id="canc3" type = "button" value ="cancella" onclick="gest.elimina(3)" style="display: none;"></td>
+                <td><select id="mod3" style="display: none" onChange="gest.modifica(3)">
+                    <option value=""></option>
+                    <option value="modifica">modifica</option>
+                </select></td>
+            </tr>
+            <tr class = "classe1">
+                <td><input type = "checkbox" onclick="gest.completa(4)" id="ch4" style="display: none;"></td>
+                <td id = "dataAttivita4" class="da"></td>
+                <td id="descAttivita4" class = "ds"></td>
+                <td><input id="canc4" type = "button" value ="cancella" onclick="gest.elimina(4)" style="display: none;"></td>
+                <td><select id="mod4" style="display: none" onChange="gest.modifica(4)">
+                    <option value=""></option>
+                    <option value="modifica">modifica</option>
+                </select></td>
+            </tr>
+            <tr class = "classe1">
+                <td><input type = "checkbox" onclick="gest.completa(5)" id="ch5" style="display: none;"></td>
+                <td id = "dataAttivita5" class="da"></td>
+                <td id="descAttivita5" class = "ds"></td>
+                <td><input id="canc5" type = "button" value ="cancella" onclick="gest.elimina(5)" style="display: none;"></td>
+                <td><select id="mod5" style="display: none" onChange="gest.modifica(5)">
+                    <option value=""></option>
+                    <option value="modifica">modifica</option>
+                </select></td>
+            </tr>
+        </table>
+    </body>
+</html>
