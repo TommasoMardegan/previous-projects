@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Prato Fiorito</title>
+	<link rel="stylesheet" href="stile.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="scriptJs.js"></script>
+</head>
+<body>
+	<!--titolo e campo html-->
+	<h1 style="font-size: 50x; color: rgb(15, 223, 15)">PRATO FIORITO</h1>
+	<table id="campoGioco"></table>
+	<script>
+		let camp1 = new Campo();
+		//metodo da eseguire alla creazione della pagina
+		camp1.avvia();
+		//se clicco su una cella (classe cell)
+		$(".cell").click(function() {
+			//eseguo il metodo passandogli la cella selezionata (this)
+			camp1.clickCella(this);
+		});
+		//caso del duobleclick ("flaggare")
+		$(".cell").dblclick(function(){ 
+			camp1.flagga(this);
+		});
+	</script>
+</body>
+</html>
