@@ -1,7 +1,7 @@
 //per indicazione:
-//var txt2 = $("<p></p>").text("ciao"); Creare with jQuery
+//var txt2 = $("<p></p>").text("ciao"); Creare con jQuery
 //$("h2").hide(); select con jQuery
-
+//(no <>)
 class Campo {
 	constructor() {
 		//costruttore campo
@@ -41,6 +41,7 @@ class Campo {
 			$("#campoGioco").append(riga);
 		}
 	}
+
 	//metodo quando apro la pagina
 	avvia() {
 		this.generaCampo();
@@ -79,7 +80,29 @@ class Campo {
 	}
 	//cambio il text della cellaSel
 	flagga(CellaSel) {
-		$(CellaSel).text("|");
+		//prendo il numero della riga della cella selezionata
+		var rigaTmp = parseInt($(CellaSel).attr("data-rig"));
+		//prendo il numero della colonna della cella selezionata
+		var colTmp = parseInt($(CellaSel).attr("data-col"));
+		//controllo se la cella è già stata rivelata
+		if (!this.campo[rigaTmp][colTmp].isRevealed) {
+			//aggiungo la flag alla cella
+			$(CellaSel).text("!");
+			//aggiorno il flag della cella
+		    this.campo[rigaTmp][colTmp].isFlagged = true;
+			//controllo se tutte le mine sono state flaggate
+			var countFlag = 0;
+			for (var i = 0; i < this.RIGHE; i++) {
+				for (var j = 0; j < this.COLONNE; j++) {
+					if (this.campo[i][j].hasMine && this.campo[i][j].isFlagged) {
+						countFlag++;
+					}
+				}
+			}
+			if (countFlag == 10) {
+				this.Vinci();
+			}
+		}
 	}
 }
 class Cella {
