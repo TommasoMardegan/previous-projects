@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Prato Fiorito</title>
+	<title>Campo minato V2</title>
 	<link rel="stylesheet" href="stile.css">
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="scriptJs.js"></script>
@@ -19,8 +19,8 @@
 			//eseguo il metodo passandogli la cella selezionata (this)
 			camp1.clickCella(this);
 		});
-		//caso del duobleclick ("flaggare")
-		$(".cell").dblclick(function(){ 
+		//caso del click destro ("flaggare")
+		$(".cell").bind('contextmenu', function() {
 			camp1.flagga(this);
 		});
 	</script>
