@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Campo minato V2</title>
+	<link rel="stylesheet" href="stile.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="scriptJs.js"></script>
+</head>
+<body>
+	<!--titolo e campo html-->
+	<h1 style="font-size: 50px; color: white">CAMPO MINATO</h1>
+    <input type="text" value="righe" id="rigIn">
+    <input type="text" value="colonne" id="colIn">
+    <input type="text" value="numero mine" id="numMine">
+    <input type="button" onclick="genera()" value="gioca">
+    <br>
+    <br>
+    <table id="campoGioco" align="center"></table>
+	<script>
+        function genera() {
+          let rigIn = document.getElementById("rigIn").value;
+          let colonIn = document.getElementById("colIn").value;
+          let camp1 = new Campo(rigIn, colonIn);
+          camp1.generaCampo(document.getElementById("numMine").value);
+          // gestisci il click sulla cella
+          $(".cell").click(function() {
+            camp1.clickCella(this);
+          });
+          // gestisci il click destro sulla cella
+          $(".cell").bind('contextmenu', function() {
+            camp1.flagga(this);
+          });
+        }       
+	</script>
+</body>
+</html>
