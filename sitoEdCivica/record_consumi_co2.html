@@ -1,0 +1,305 @@
+<html>
+<head>
+  <title>Record Consumi di CO2</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background-color: orange;
+    }
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .div-sezione {
+      border: 2px solid black;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <br>
+    <h1 style="color: orange; font-size: 50px">Record Consumi di CO2</h1>
+    <br><br>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="div-sezione">
+          <h2>Consumi di CO2 del giorno</h2>
+          <!--pre fa si che il testo sia visualizzato come è stato inserito nel codice-->
+          <font style='font-size: 20px'><pre id="co2Giorno"></pre></font>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="div-sezione">
+          <h2>Consumi di CO2 degli ultimi 7 giorni</h2>
+          <font style='font-size: 20px'><pre id="co2Settimana"></pre></font>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="div-sezione">
+          <h2>Consumi di CO2 del mese</h2>
+          <font style='font-size: 20px'><pre id="co2Mese"></pre></font>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="div-sezione">
+          <h2>Consumi di CO2 dell'anno</h2>
+          <font style='font-size: 20px'><pre id="co2Anno"></pre></font>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="div-sezione">
+          <h2>Grafico dei consumi di CO2 degli ultimi 7 giorni</h2>
+          <canvas id="grafBarre"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="div-sezione">
+          <h2>Grafico dei consumi di CO2 degli ultimi 6 mesi</h2>
+          <canvas id="mesiGrafBarre"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <i>leggi i consigli utili per migliorare consumi di CO2</i>
+      </div>
+    </div>
+  </div>
+  <script>
+    //funzione per calcolare il consumo di co2 di ciascun mese per gli ultimi 6 mesi 
+    function calcolaConsumiUltimiSeiMesi() {
+    //ottengo le misurazioni dal localStorage
+    var consumiCO2 = getConsumiCO2();
+    var oggi = new Date();
+    var consumiUltimiSeiMesi = {};
+    
+    //ottengo per ciascuna misurazione la co2 prodotta e la data della misur.
+    for (var i = 0; i < consumiCO2.length; i++) {
+      var riga = consumiCO2[i];
+      var dataCO2 = riga.split(",")[0];
+      var co2 = parseFloat(riga.split(",")[1]);
+
+      var dataRiga = new Date(formattaDataISO(dataCO2));
+      
+      //calcolo la diffrenza di tempo tra oggi e la misurazione (in mesi)
+      //trovo gli anni di differenza e moltiplico per 12 per convertire in mesi
+      //es: 9/2/2023 e 19/7/2023
+      var diffInMesi = (oggi.getFullYear() - dataRiga.getFullYear()) * 12; //diffInMesi=0
+      diffInMesi -= dataRiga.getMonth(); //diffInMesi=-1
+      diffInMesi += oggi.getMonth(); //diffInMesi=5
+      
+      //se ricade nei 6 mesi ne tengo conto
+      if (diffInMesi >= 0 && diffInMesi < 6) {
+        var NumeroMese = dataRiga.getMonth() + 1; 
+        var nomeMese = getNomeMeseDaNumero(NumeroMese);
+        //controllo se esiste consumiUltimiSeiMesi[nomeMese]
+        if (consumiUltimiSeiMesi[nomeMese]) {
+          //se esiste aggiungo la co2 della misurazione a quella totale del mese
+          consumiUltimiSeiMesi[nomeMese] += co2;
+        } else {
+          //altrimenti creo consumiUltimiSeiMesi[nomeMese] con valore iniziale della misurazione
+          consumiUltimiSeiMesi[nomeMese] = co2;
+        }
+      }
+    }
+    //Object.keys(consumiUltimiSeiMesi) ottiene le chiavi ("es: gennaio, febbraio") contenute in consumiultimiSeiMesi
+    var consumiUltimiSeiMesiArray = Object.keys(consumiUltimiSeiMesi).map(mese => ({
+      mese, //per ogni mese (chiave) crea un oggetto contente nome del mese e consumo di co2 di quel mese
+      consumo: consumiUltimiSeiMesi[mese]
+    }));
+
+    return consumiUltimiSeiMesiArray;
+  }
+   //funzione per ottenere tutte le misurazioni memorizzate in local storage sottoforma di righe
+    function getConsumiCO2() {
+      var consumiCO2String = localStorage.getItem("dati_misurazioni");
+      if (consumiCO2String) {
+        return consumiCO2String.split("\n").filter(Boolean); //divide la stringa in un array di stringhe evitando quelle vuote
+      } else {
+        return [];
+      }
+    }
+    
+    //funzione per formattare la data in iso
+    function formattaDataISO(data) {
+      var partiData = data.split("/");
+      var giorno = partiData[0].padStart(2, '0');  //es: 5 diventa 05
+      var mese = partiData[1].padStart(2, '0');
+      var anno = partiData[2];
+      return anno + '-' + mese + '-' + giorno;
+    }
+    
+    // Funzione per calcolare i consumi di CO2 nel giorno, settimana, mese e anno corrente,
+    //oltre che ottenere la prod. di co2 degli ultimi 7 giorni giorno per girno per il grafico a barre
+    function calcolaConsumiCO2() {
+      //ottengo i consumi di CO2
+      var consumiCO2 = getConsumiCO2();
+
+      //ottengo la data di oggi e la formatto in iso 
+      var oggi = new Date();
+      var oggiISO = oggi.toISOString().slice(0, 10);
+
+      //inizi. variabili per i consumi giornalieri, settimanali, mensili e annuali
+      var consumiGiorno = 0;
+      var consumiSettimana = 0;
+      var consumiMese = 0;
+      var consumiAnno = 0;
+
+      //oggetto per tenere traccia dei consumi per ogni giorno dell'ultima settimana
+      var consumiPerData = {};
+
+      //itero tra le misurazioni di CO2
+      for (var i = 0; i < consumiCO2.length; i++) {
+        var riga = consumiCO2[i];
+        //data e produzione di co2
+        var dataCO2 = riga.split(",")[0];
+        var co2 = parseFloat(riga.split(",")[1]);
+
+        //formatto in iso la data
+        var dataCO2ISO = formattaDataISO(dataCO2);
+
+        //verifico se la data è uguale alla data corrente
+        if (dataCO2ISO === oggiISO) {
+          consumiGiorno += co2;
+        }
+
+        //confronto la data con l'ultima settimana (7 giorni)
+        var dataRiga = new Date(dataCO2ISO);
+        if (oggi - dataRiga <= 7 * 24 * 60 * 60 * 1000) {
+          consumiSettimana += co2;
+
+          //aggiungo la misurazione di co2 al giorno corrispondente nell'oggetto consumiPerData
+          //elimino l'ora dalla data
+          var dataRigaSenzaOra = dataCO2ISO.split('T')[0];
+          if (consumiPerData[dataRigaSenzaOra]) {
+            consumiPerData[dataRigaSenzaOra] += co2;
+          } else {
+            consumiPerData[dataRigaSenzaOra] = co2;
+          }
+        }
+
+        //verifico se la data è nello stesso mese del giorno corrente
+        if (oggi.getMonth() === dataRiga.getMonth()) {
+          consumiMese += co2;
+        }
+
+        // Verifica se la data è nello stesso anno del giorno corrente
+        if (oggi.getFullYear() === dataRiga.getFullYear()) {
+          consumiAnno += co2;
+        }
+      }
+
+      //creo un array dei consumi settimanali per il grafico
+      var consumiSettimanaArray = Object.keys(consumiPerData).map(function (data) {
+        return consumiPerData[data];
+      });
+
+      //restituisco un oggetto con i consumi calcolati e le etichette per il grafico settimanale
+      return {
+        consumiGiorno,
+        consumiSettimana,
+        consumiMese,
+        consumiAnno,
+        etichetteGrafico: Object.keys(consumiPerData),
+        consumiSettimanaArray,
+      };
+    }
+    //funzione per visualizzare tutti i consumi calcolati (co2 giorno, sett., mese, anno) e il grafico dei consumi settimanali
+    function visualizzaConsumiCO2() {
+      //calcolo dei consumi di CO2
+      var consumiCO2 = calcolaConsumiCO2();
+
+      //ottiengo gli el. html per visualizzare i consumi
+      var co2GiornoDiv = document.getElementById("co2Giorno");
+      var co2SettimanaDiv = document.getElementById("co2Settimana");
+      var co2MeseDiv = document.getElementById("co2Mese");
+      var co2AnnoDiv = document.getElementById("co2Anno");
+
+      //aggiorno il contenuto delle div con le informazioni sui consumi
+      co2GiornoDiv.innerHTML = "Consumi di CO2 del giorno: " + consumiCO2.consumiGiorno.toFixed(2) + " kg";
+      co2SettimanaDiv.innerHTML = "Consumi di CO2 degli ultimi 7 giorni: " + consumiCO2.consumiSettimana.toFixed(2) + " kg";
+      co2MeseDiv.innerHTML = "Consumi di CO2 del mese: " + consumiCO2.consumiMese.toFixed(2) + " kg";
+      co2AnnoDiv.innerHTML = "Consumi di CO2 dell'anno: " + consumiCO2.consumiAnno.toFixed(2) + " kg";
+
+      //creo un grafico a barre
+      var graficoBarre = new Chart(document.getElementById('grafBarre'), {
+        type: 'bar',
+        data: {
+          labels: consumiCO2.etichetteGrafico,  //etichette del grafico
+          datasets: [{
+            label: 'Consumi di CO2 degli ultimi 7 giorni', //titolo grafico
+            data: consumiCO2.consumiSettimanaArray, //valori
+            backgroundColor: 'rgba(255, 99, 132, 0.5)', 
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+    //funzione per ottenere il mese corrispondente al numero fornito
+    function getNomeMeseDaNumero(numeroMese) {
+      var nomiMesi = [
+        "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+        "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
+      ];
+      return nomiMesi[parseInt(numeroMese, 10) - 1] || '';
+    }
+    //funzione per visualizzare il consumo di co2 degli ultimi 6 mesi tramite grafico
+    function visualizzaConsumiUltimiSeiMesi() {
+      //calcolo i consumi degli ultimi 6 mesi
+      var consumiUltimiSeiMesi = calcolaConsumiUltimiSeiMesi();
+        //ottengo le etichette dei mesi e i consumi mensili dai dati calcolati
+        var mesiLabels = consumiUltimiSeiMesi.map(item => item.mese); //array contenente tutti i mesi contenuti negli oggetti dell'array
+        var consumiMensili = consumiUltimiSeiMesi.map(item => item.consumo); //" " tutti i consumi " "
+
+        //creo un grafico a barre e lo inserisco nell'elemento html con id 'mesiGrafBarre'
+        var graficoMesi = new Chart(document.getElementById('mesiGrafBarre'), {
+          type: 'bar',
+          data: {
+            labels: mesiLabels, //etichette
+            datasets: [{
+              label: 'Consumi di CO2 degli ultimi 6 mesi', //titolo grafico
+              data: consumiMensili, //valori
+              backgroundColor: 'rgba(54, 162, 235, 0.5)', 
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+  //richiamo le funzioni necessare per la visualizzazione
+  visualizzaConsumiCO2();
+  visualizzaConsumiUltimiSeiMesi();
+  </script>
+</body>
+</html>
