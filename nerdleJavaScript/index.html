@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Nerdle Matematico</title>
+  <script src="script.js"></script>
+  <link rel="stylesheet" href="bootstrap.css">
+  <script src="bootstrap.js"></script>
+  <style>
+    body {
+      background-color: lightblue;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #board {
+      width: 700px;
+    }
+
+    .riga {
+      display: flex;
+    }
+
+    .cella {
+      width: 60px;
+      height: 60px;
+      border: 1px solid black;
+      text-align: center;
+      margin-right: 5px;
+    }
+
+    #controlli {
+      margin-top: 20px;
+    }
+
+    .green {
+      background-color: green;
+    }
+
+    .purple {
+      background-color: purple;
+    }
+
+    .black {
+      background-color: black;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Nerdle</h1>
+    <div id="board">
+      <div class="riga">
+        <input type="text" class="cella" maxlength="1">
+        <input type="text" class="cella" maxlength="1">
+        <input type="text" class="cella" maxlength="1">
+        <input type="text" class="cella" maxlength="1">
+        <input type="text" class="cella" maxlength="1">
+        <input type="text" class="cella" maxlength="1">
+        <input type="text" class="cella" maxlength="1">
+        <input type="text" class="cella" maxlength="1">
+      </div>
+    </div>
+    <div id="controlli">
+      <button onclick="controllaSoluzione()" class="btn btn-outline-dark">verifica</button>
+    </div>
+  </div>
+</body>
+</html>
