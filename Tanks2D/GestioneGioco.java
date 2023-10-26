@@ -43,7 +43,7 @@ public class GestioneGioco {
 
         punteggioPanel.add(punteggioLabel, BorderLayout.NORTH);
 
-        Font titleFont = new Font("SansSerif", Font.BOLD, 24); // Cambia le dimensioni del font come preferisci
+        Font titleFont = new Font("SansSerif", Font.BOLD, 24); 
         punteggioLabel.setFont(titleFont);
         //aggiungo pannello e immagine di sfondo al frame
         _objGrafica.getContentPane().setLayout(new BorderLayout());
