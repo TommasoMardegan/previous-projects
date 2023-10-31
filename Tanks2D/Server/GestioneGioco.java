@@ -96,5 +96,14 @@ public class GestioneGioco extends JPanel {
     public void disegnaTabellaInfo() {
 
     }
+
+    //muove il carro nella direzione indicata dal client
+    public void muoviCarro(String carro, String direzione){
+        for(int i=0;i<listaCarri.size();i++){
+            if(listaCarri.get(i).letteraCarro.equals(carro)){
+                listaCarri.get(i).muoviCarro(direzione);
+            }
+        }
+    }
     
 }

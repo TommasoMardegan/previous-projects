@@ -56,7 +56,9 @@ public class Server {
 
             String ricevuto = new String(packet.getData(), 0, packet.getLength());
             
-            System.out.println("il server riceve: " + ricevuto);
+            System.out.println("il server riceve: " + ricevuto.substring(0,1));
+            gc.muoviCarro(ricevuto.substring(0,1), ricevuto.substring(1,2));
+
         }
     }
     //disegno la finestra di gioco
